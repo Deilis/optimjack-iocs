@@ -1,0 +1,13 @@
+``` Optimizely Web / track.js, 16 November 2026. Proxy or secure web gateway logs. ```
+index=proxy earliest="11/12/2026:00:00:00" latest="11/18/2026:00:00:00"
+  (url="*1688360.cc*" OR url="*webshell.lol/get.js*" OR url="*5vobauua3ojpklx.icu*" OR url="*eil786npto9u5bq.icu*"
+   OR url="*l7bcsnwc7nzr3uo.icu/api/iptj*" OR dest_ip IN ("136.113.106.136", "34.96.213.201", "34.87.36.58"))
+| eval what=case(like(url, "%card.php%"), "card data sent",
+                 like(url, "%hook.php%"), "cookies sent without an address swap",
+                 like(url, "%hit.php%"), "cookies and screenshot sent",
+                 like(url, "%px.gif%"), "loader could not run (error pixel)",
+                 like(url, "%boot.js%") OR like(url, "%JIUJIU888%"), "iOS chain requested",
+                 like(url, "%track.js%"), "payload requested",
+                 true(), "indicator host contacted")
+| stats min(_time) as first max(_time) as last count values(what) as what values(http_referrer) as referrers by src_ip, user
+| convert ctime(first) ctime(last)

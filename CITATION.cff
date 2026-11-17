@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use these indicators or rules, please cite the article."
+title: "OPTIMJACK: indicators and detections for the Optimizely track.js attack"
+type: dataset
+authors:
+  - family-names: Lis
+    given-names: Deividas
+date-released: "2026-11-17"
+version: "1.1.0"
+url: "https://hecavex.com/en/research/optimizely-supply-chain-track-js/"
+repository-code: "https://github.com/Deilis/optimjack-iocs"
+keywords:
+  - OPTIMJACK
+  - Optimizely
+  - supply chain
+  - crypto clipper
+  - card skimmer
+  - indicators of compromise
+preferred-citation:
+  type: article
+  title: "OPTIMJACK: Inside track.js, 26 Builds and the Money Trail of the Optimizely Attack"
+  authors:
+    - family-names: Lis
+      given-names: Deividas
+  year: 2026
+  month: 11
+  url: "https://hecavex.com/en/research/optimizely-supply-chain-track-js/"
+  publisher:
+    name: HECAVEX

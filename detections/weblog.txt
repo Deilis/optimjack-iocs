@@ -1,0 +1,23 @@
+# First-party evidence: your own web server or CDN access log for 16 November 2026 (UTC).
+#
+# The builds of 08:01:15 to 08:30:54 UTC called RELATIVE paths (a rule engine, then a leftover beacon). Loaded from a third-party
+# host, those requests went to the origin of the page the visitor was on, which means your site:
+#
+#   GET  /_geo                                          geolocation lookup, expects JSON, 2 s timeout
+#   POST /px?r=<rule id>&c=<country>&d=<device>&v=<build>&_=<ms>   sent with navigator.sendBeacon
+#   POST /px?r=1&d=<device>                             fixed form in the 08:27:07 build, seen on www.bbc.com at 08:28 UTC
+#
+# A site that has no /px or /_geo route answers 404 or 405, and the request stays in the log.
+# One line per page view that ran the engine, with the visitor's address, the rule that fired and the device class.
+# The beacon was removed in the 08:30:54 build, so absence after about 08:31 UTC proves nothing.
+
+# nginx / Apache combined log format
+grep -E '"(GET|POST) /(_geo|px\?r=[0-9]+(&c=[A-Z]{0,2})?&d=(desktop|iphone|ipad|android|android_tablet|mobile|tablet|windowsphone))' access.log
+
+# CloudFront, Fastly or other CDN logs with separate path and query fields
+#   path = "/px"   and query matches ^r=[0-9]+(&c=[A-Z]{0,2})?&d=[a-z_]+
+#   path = "/_geo" and referer is one of your own pages
+
+# Content-Security-Policy reports (report-uri / report-to), if you collect them
+#   blocked-uri containing 1688360[.]cc, webshell[.]lol or one of the .icu hosts in iocs.csv
+#   effective-directive script-src-elem, connect-src or frame-src

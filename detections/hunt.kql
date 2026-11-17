@@ -1,0 +1,22 @@
+// Optimizely Web / track.js, 16 November 2026. Microsoft Defender XDR advanced hunting.
+// Start at the first webshell[.]lol wave (12 Nov) and run past the clean-up.
+let start = datetime(2026-11-12 00:00:00Z);
+let stop  = datetime(2026-11-18 00:00:00Z);
+let hosts = dynamic(["1688360.cc", "webshell.lol", "5vobauua3ojpklx.icu", "eil786npto9u5bq.icu", "l7bcsnwc7nzr3uo.icu",
+                     "je4ft3gn8vxudum.icu", "p55abnw2pnsz0bo.icu", "1y69gy2mdzaltz1.icu", "gm38duxoihbmy5o.icu",
+                     "q1ls1ho9x7wsxlu.icu", "ios-hack.icu"]);
+let ips = dynamic(["136.113.106.136", "34.96.213.201", "34.87.36.58"]);
+DeviceNetworkEvents
+| where Timestamp between (start .. stop)
+| extend Host = tolower(tostring(parse_url(RemoteUrl).Host))
+| extend Host = iff(isempty(Host), tolower(RemoteUrl), Host)
+| where Host in (hosts) or Host has_any (hosts) or RemoteIP in (ips)
+| extend What = case(RemoteUrl has "card.php", "card data sent",
+                     RemoteUrl has "hook.php", "cookies sent without an address swap",
+                     RemoteUrl has "hit.php", "cookies and screenshot sent",
+                     RemoteUrl has "px.gif", "loader could not run (error pixel)",
+                     RemoteUrl has "boot.js" or RemoteUrl has "JIUJIU888", "iOS chain requested",
+                     RemoteUrl has "track.js", "payload requested",
+                     "indicator host contacted")
+| project Timestamp, DeviceName, InitiatingProcessAccountName, InitiatingProcessFileName, RemoteUrl, RemoteIP, What
+| order by Timestamp asc
